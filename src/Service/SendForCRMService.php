@@ -5,6 +5,7 @@ namespace App\Service;
 use App\DTO\RequestDTOInterface;
 use App\Entity\TrainingCentre;
 use Doctrine\ORM\EntityManagerInterface;
+use ErrorException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -18,7 +19,7 @@ final class SendForCRMService
 
     private string|null $trainingCentreCrmUrl = null;
 
-    private string|null $orderId = null;
+    private string $orderId;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
@@ -28,32 +29,34 @@ final class SendForCRMService
     {
     }
 
+    /**
+     * @throws TransportExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws ClientExceptionInterface
+     */
     public function __invoke(RequestDTOInterface $param): array
     {
         $this->orderId = $this->orderIdService->getOrderId($param);
         $this->trainingCentreFactory($param->getTrainingCentre());
-        $crmURL = $this->getCrmUrl($param->getTrainingCentre());
+        $crmURL = $this->getCrmUrl();
         $param = $this->convertResponseData($param);
         $param = $this->setCustomParam($param);
-        try {
-            $response = $this->httpClient->request(
-                'POST',
-                $crmURL,
-                [
-                    'body' => $param,
-                    'extra' => [
-                        'curl' => [
-                            CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-                        ],
+        $response = $this->httpClient->request(
+            'POST',
+            $crmURL,
+            [
+                'body' => $param,
+                'extra' => [
+                    'curl' => [
+                        CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
                     ],
-                ]
-            );
+                ],
+            ]
+        );
 
-            $responseResult = $response->toArray();
-        } catch (TransportExceptionInterface|ServerExceptionInterface|RedirectionExceptionInterface|DecodingExceptionInterface|ClientExceptionInterface $e) {
-            throw new $e->getMessage();
-        }
-        return $responseResult;
+        return $response->toArray();
     }
 
     private function setCustomParam($param)
@@ -81,7 +84,7 @@ final class SendForCRMService
     public function getKey($param): string
     {
         $apiKey = md5($this->trainingCentreCrmUrl.$this->trainingCentreHashKey);
-        return md5($apiKey . $param['phone'] . $param['email']);;
+        return md5($apiKey . $param['phone'] . $param['email']);
     }
 
     private function convertResponseData(RequestDTOInterface $param): array
