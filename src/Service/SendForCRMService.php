@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\DTO\RequestDTOInterface;
 use App\Entity\TrainingCentre;
 use Doctrine\ORM\EntityManagerInterface;
-use ErrorException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface as TransportExceptionInterfaceAlias;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class SendForCRMService
@@ -19,18 +20,18 @@ final class SendForCRMService
 
     private string|null $trainingCentreCrmUrl = null;
 
-    private string $orderId;
+    //private readonly string|int $orderId;
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly HttpClientInterface $httpClient,
-        private readonly OrderIdService $orderIdService
+        private readonly HttpClientInterface $httpClient
+        //private readonly OrderIdService $orderIdService
     )
     {
     }
 
     /**
-     * @throws TransportExceptionInterface
+     * @throws TransportExceptionInterfaceAlias
      * @throws ServerExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws DecodingExceptionInterface
@@ -38,7 +39,7 @@ final class SendForCRMService
      */
     public function __invoke(RequestDTOInterface $param): array
     {
-        $this->orderId = $this->orderIdService->getOrderId($param);
+        //$this->orderId = $this->orderIdService->getOrderId($param);
         $this->trainingCentreFactory($param->getTrainingCentre());
         $crmURL = $this->getCrmUrl();
         $param = $this->convertResponseData($param);
@@ -67,7 +68,7 @@ final class SendForCRMService
         return $param;
     }
 
-    private function trainingCentreFactory(int $trainingCentreId): void
+    private function trainingCentreFactory(int|string $trainingCentreId): void
     {
         $trainingCentre = $this->entityManager->getRepository(TrainingCentre::class)->find(
             $trainingCentreId
