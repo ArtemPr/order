@@ -31,35 +31,18 @@ class RequestDTO implements RequestDTOInterface
     #[Serializer\SerializedName("comment")]
     private ?string $comment;
 
-    #[Type("int")]
-    #[Serializer\SerializedName("tab_id")]
-    private ?int $tab_id;
-
     #[Type("string")]
     #[Serializer\SerializedName("current_price")]
-    private ?string $current_price;
+    private ?string $price;
 
     #[Type("int")]
     #[Serializer\SerializedName("long_time")]
     private ?int $long_time;
 
     #[Type("string")]
-    #[Serializer\SerializedName("site_domain_exact")]
-    private ?string $site_domain_exact;
+    #[Serializer\SerializedName("training_centre")]
+    private ?int $training_centre;
 
-    #[Type("string")]
-    #[Serializer\SerializedName("page_url")]
-    private ?string $page_url;
-
-    #[Type("string")]
-    #[Serializer\SerializedName("form_name")]
-    private ?string $form_name;
-
-    #[Type("string")]
-    #[Serializer\SerializedName("link_thank_you")]
-    private ?string $link_thank_you;
-
-    
     public function getName(): ?string
     {
         return $this->name;
@@ -70,7 +53,6 @@ class RequestDTO implements RequestDTOInterface
         $this->name = $name;
     }
 
-    
     public function getEmail(): ?string
     {
         return $this->email;
@@ -95,7 +77,7 @@ class RequestDTO implements RequestDTOInterface
         }
         $this->phone = $phone;
     }
-    
+
     public function getProduct(): ?string
     {
         return $this->product;
@@ -116,7 +98,6 @@ class RequestDTO implements RequestDTOInterface
         $this->product_id = $product_id;
     }
 
-    
     public function getComment(): ?string
     {
         return $this->comment;
@@ -127,25 +108,14 @@ class RequestDTO implements RequestDTOInterface
         $this->comment = $comment;
     }
 
-    public function getTabId(): ?int
+    public function getPrice(): ?string
     {
-        return $this->tab_id;
+        return $this->price;
     }
 
-    public function setTabId(?int $tab_id): void
+    public function setPrice(?string $price): void
     {
-        $this->tab_id = $tab_id;
-    }
-
-    
-    public function getCurrentPrice(): ?string
-    {
-        return $this->current_price;
-    }
-
-    public function setCurrentPrice(?string $current_price): void
-    {
-        $this->current_price = $current_price;
+        $this->price = $price;
     }
 
     public function getLongTime(): ?int
@@ -158,47 +128,14 @@ class RequestDTO implements RequestDTOInterface
         $this->long_time = $long_time;
     }
 
-    
-    public function getSiteDomainExact(): ?string
+    public function getTrainingCentre(): ?string
     {
-        return $this->site_domain_exact;
+        return $this->training_centre;
     }
 
-    public function setSiteDomainExact(?string $site_domain_exact): void
+    public function setTrainingCentre(?string $training_centre): void
     {
-        $this->site_domain_exact = $site_domain_exact;
+        $this->training_centre = $training_centre;
     }
 
-    
-    public function getPageUrl(): ?string
-    {
-        return $this->page_url;
-    }
-
-    public function setPageUrl(?string $page_url): void
-    {
-        $this->page_url = $page_url;
-    }
-
-    
-    public function getFormName(): ?string
-    {
-        return $this->form_name;
-    }
-
-    public function setFormName(?string $form_name): void
-    {
-        $this->form_name = $form_name;
-    }
-
-    
-    public function getLinkThankYou(): ?string
-    {
-        return $this->link_thank_you;
-    }
-
-    public function setLinkThankYou(?string $link_thank_you): void
-    {
-        $this->link_thank_you = $link_thank_you;
-    }
 }
